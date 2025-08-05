@@ -18,6 +18,11 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        cyber: "bg-cyber-green text-background hover:bg-cyber-green-glow border border-cyber-green hover:shadow-[0_0_20px_hsl(var(--cyber-green)/0.6)] transition-all duration-300",
+        "cyber-outline": "border-2 border-cyber-green text-cyber-green hover:bg-cyber-green hover:text-background hover:shadow-[0_0_20px_hsl(var(--cyber-green)/0.6)] transition-all duration-300",
+        scan: "bg-gradient-to-r from-cyber-green to-cyber-green-glow text-background hover:from-cyber-green-glow hover:to-cyber-green animate-pulse border border-cyber-green-glow",
+        danger: "bg-danger-red text-foreground hover:bg-danger-red/90 border border-danger-red hover:shadow-[0_0_20px_hsl(var(--danger-red)/0.6)]",
+        warning: "bg-warning-amber text-background hover:bg-warning-amber/90 border border-warning-amber hover:shadow-[0_0_20px_hsl(var(--warning-amber)/0.6)]",
       },
       size: {
         default: "h-10 px-4 py-2",

@@ -2,39 +2,60 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* HackShield Cybersecurity Design System - Dark Hacker Theme */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Core hacker theme colors */
+    --background: 210 15% 7%;
+    --foreground: 120 100% 85%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 210 15% 9%;
+    --card-foreground: 120 100% 85%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 210 15% 9%;
+    --popover-foreground: 120 100% 85%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 120 100% 50%;
+    --primary-foreground: 210 15% 7%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 210 15% 12%;
+    --secondary-foreground: 120 100% 85%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 15% 12%;
+    --muted-foreground: 120 30% 65%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 120 100% 40%;
+    --accent-foreground: 210 15% 7%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 85% 55%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 120 100% 25%;
+    --input: 210 15% 12%;
+    --ring: 120 100% 50%;
+
+    /* Custom HackShield theme tokens */
+    --cyber-green: 120 100% 50%;
+    --cyber-green-dim: 120 100% 40%;
+    --cyber-green-glow: 120 100% 60%;
+    --terminal-green: 120 85% 65%;
+    --warning-amber: 45 100% 55%;
+    --danger-red: 0 85% 55%;
+    
+    /* Gradients */
+    --gradient-cyber: linear-gradient(135deg, hsl(var(--cyber-green)) 0%, hsl(var(--cyber-green-dim)) 100%);
+    --gradient-terminal: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(210 15% 10%) 100%);
+    --gradient-scan: linear-gradient(90deg, hsl(var(--cyber-green)) 0%, hsl(var(--cyber-green-glow)) 50%, hsl(var(--cyber-green)) 100%);
+    
+    /* Shadows and glows */
+    --glow-cyber: 0 0 20px hsl(var(--cyber-green) / 0.5);
+    --glow-scan: 0 0 30px hsl(var(--cyber-green) / 0.7);
+    --shadow-terminal: 0 4px 20px hsl(210 15% 2% / 0.8);
+    
+    /* Animations */
+    --transition-cyber: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --pulse-duration: 2s;
 
     --radius: 0.5rem;
 
@@ -100,6 +121,43 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-mono;
+    background: var(--gradient-terminal);
+  }
+  
+  /* Custom cyber animations */
+  @keyframes cyber-pulse {
+    0%, 100% { 
+      box-shadow: var(--glow-cyber); 
+      text-shadow: 0 0 10px hsl(var(--cyber-green) / 0.8);
+    }
+    50% { 
+      box-shadow: var(--glow-scan); 
+      text-shadow: 0 0 20px hsl(var(--cyber-green));
+    }
+  }
+  
+  @keyframes scan-line {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  
+  @keyframes terminal-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+  
+  .cyber-pulse {
+    animation: cyber-pulse var(--pulse-duration) ease-in-out infinite;
+  }
+  
+  .scan-animation {
+    animation: scan-line 2s ease-in-out infinite;
+  }
+  
+  .terminal-cursor::after {
+    content: '_';
+    animation: terminal-blink 1s infinite;
+    color: hsl(var(--cyber-green));
   }
 }

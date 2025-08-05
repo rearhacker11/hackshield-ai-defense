@@ -52,6 +52,21 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				// HackShield custom colors
+				cyber: {
+					green: 'hsl(var(--cyber-green))',
+					'green-dim': 'hsl(var(--cyber-green-dim))',
+					'green-glow': 'hsl(var(--cyber-green-glow))',
+				},
+				terminal: {
+					green: 'hsl(var(--terminal-green))',
+				},
+				warning: {
+					amber: 'hsl(var(--warning-amber))',
+				},
+				danger: {
+					red: 'hsl(var(--danger-red))',
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
