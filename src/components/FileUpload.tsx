@@ -102,7 +102,7 @@ export const FileUpload = ({ onFileUpload }: FileUploadProps) => {
             File Upload & Analysis
           </CardTitle>
           <CardDescription>
-            Upload files for AI-powered malware detection. Supported formats: .exe, .pdf, .txt, .docx, .py
+            Upload files for real VirusTotal AI-powered malware detection. Supported formats: .exe, .pdf, .txt, .docx, .py
           </CardDescription>
         </CardHeader>
         <CardContent>

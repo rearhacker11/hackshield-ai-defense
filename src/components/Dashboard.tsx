@@ -77,22 +77,62 @@ export const Dashboard = ({ user, onLogout }: DashboardProps) => {
     setIsScanning(true);
     setCurrentView("results");
 
-    // Simulate AI scanning process
-    setTimeout(() => {
-      const isMalware = Math.random() < 0.3; // 30% chance of malware
-      const confidence = 85 + Math.random() * 15; // 85-100% confidence
-      
+    try {
+      // Real VirusTotal API integration
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('http://localhost:5000/scan-file', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.error) {
+        // Handle API errors
+        const errorScan: ScanResult = {
+          ...newScan,
+          status: "safe", // Default to safe on error
+          confidence: 0,
+          threats: [`API Error: ${result.error}`]
+        };
+        setCurrentScan(errorScan);
+        setScanResults(prev => [errorScan, ...prev]);
+        setIsScanning(false);
+        return;
+      }
+
+      // Process VirusTotal response
+      const isMalware = result.status === "Malicious";
+      const detectionCount = result.detections || 0;
+      const confidence = isMalware ? 
+        Math.min(95, 70 + (detectionCount * 5)) : // Higher confidence with more detections
+        Math.max(85, 99 - (detectionCount * 2)); // Lower confidence if some engines detect but overall harmless
+
       const completedScan: ScanResult = {
         ...newScan,
         status: isMalware ? "malware" : "safe",
         confidence: Math.round(confidence * 10) / 10,
-        threats: isMalware ? ["Trojan.Generic", "Suspicious.Behavior"] : []
+        threats: isMalware ? [`${detectionCount} engines detected threats`, "VirusTotal Analysis"] : []
       };
 
       setCurrentScan(completedScan);
       setScanResults(prev => [completedScan, ...prev]);
       setIsScanning(false);
-    }, 5000);
+
+    } catch (error) {
+      // Handle network errors
+      const errorScan: ScanResult = {
+        ...newScan,
+        status: "safe",
+        confidence: 0,
+        threats: [`Network Error: ${error instanceof Error ? error.message : 'Unable to connect to scanning service'}`]
+      };
+      setCurrentScan(errorScan);
+      setScanResults(prev => [errorScan, ...prev]);
+      setIsScanning(false);
+    }
   };
 
   const stats = {
