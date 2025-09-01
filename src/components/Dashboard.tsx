@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { HackShieldLogo } from "./HackShieldLogo";
 import { FileUpload } from "./FileUpload";
 import { ScanResults } from "./ScanResults";
+import { PaymentModal } from "./PaymentModal";
+import { UserProfile } from "./UserProfile";
 import { 
   Upload, 
   History, 
@@ -36,6 +38,7 @@ interface DashboardProps {
 
 export const Dashboard = ({ user, onLogout }: DashboardProps) => {
   const [currentView, setCurrentView] = useState<"upload" | "results" | "history">("upload");
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [scanResults, setScanResults] = useState<ScanResult[]>([
     {
       id: "1",
@@ -198,6 +201,12 @@ export const Dashboard = ({ user, onLogout }: DashboardProps) => {
               </CardContent>
             </Card>
 
+            {/* User Profile & Payment */}
+            <UserProfile 
+              user={user}
+              onOpenPayment={() => setIsPaymentModalOpen(true)}
+            />
+
             {/* Quick Stats */}
             <Card className="bg-card/80 border-border mt-6">
               <CardHeader>
@@ -292,6 +301,17 @@ export const Dashboard = ({ user, onLogout }: DashboardProps) => {
           </div>
         </div>
       </div>
+
+      {/* Payment Modal */}
+      <PaymentModal 
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        onPaymentSuccess={() => {
+          // Refresh user data or show success message
+          console.log("Payment successful!");
+        }}
+        user={user}
+      />
     </div>
   );
 };
