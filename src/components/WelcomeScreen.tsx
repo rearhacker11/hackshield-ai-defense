@@ -17,7 +17,7 @@ export const WelcomeScreen = ({ onGetStarted }: WelcomeScreenProps) => {
           </div>
           <div className="space-y-4">
             <h2 className="text-xl text-terminal-green">
-              Advanced AI-Powered Cybersecurity Defense
+              Advanced AI-Powered Cybersecurity Defense  
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Protect your digital assets with cutting-edge machine learning technology. 
