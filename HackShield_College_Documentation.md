@@ -348,17 +348,319 @@ In today's digital era, cybersecurity threats are increasing exponentially. The 
 
 ## 3.1 Data Flow Diagram (DFD)
 
-### Level 0 - Context Diagram
+### Level 0 - Context Diagram (0th Level)
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                                                                         │
-│   ┌──────────┐         Login/Register          ┌───────────────────┐   │
-│   │          │ ────────────────────────────────►                   │   │
-│   │          │         File Upload             │                   │   │
-│   │   USER   │ ────────────────────────────────►    HackShield     │   │
-│   │          │◄──────────────────────────────── │      System      │   │
-│   │          │         Scan Results            │                   │   │
+                                    ┌─────────────────────────────────────┐
+                                    │                                     │
+    ┌──────────┐                    │                                     │                    ┌──────────┐
+    │          │   File Upload      │                                     │   Scan Results     │          │
+    │          │ ─────────────────► │                                     │ ─────────────────► │          │
+    │   USER   │   Login Request    │           HACKSHIELD                │   Payment Status   │  ADMIN   │
+    │          │ ─────────────────► │         AI MALWARE SCANNER          │ ─────────────────► │          │
+    │          │   Payment Details  │                                     │   User Reports     │          │
+    │          │ ─────────────────► │                                     │ ─────────────────► │          │
+    │          │ ◄───────────────── │                                     │                    │          │
+    └──────────┘   Auth Response    │                                     │                    └──────────┘
+                   Scan Report      └─────────────────────────────────────┘
+                   Payment Receipt
+```
+
+---
+
+### Level 1 DFD (1st Level)
+
+```
+                                           ┌─────────────────┐
+                                           │   USER_CREDITS  │
+                                           │      (D3)       │
+                                           └────────┬────────┘
+                                                    │
+                                                    │ Credits Info
+                                                    ▼
+    ┌──────────┐      Registration       ┌──────────────────────┐
+    │          │ ──────────────────────► │                      │
+    │          │      Login Details      │                      │
+    │   USER   │ ──────────────────────► │    1.0               │
+    │          │                         │  REGISTRATION        │ ────────────────► ┌─────────────┐
+    │          │ ◄────────────────────── │                      │   User Data       │   USERS     │
+    │          │      Auth Token         └──────────────────────┘                   │    (D1)     │
+    └──────────┘                                                                    └─────────────┘
+```
+
+---
+
+### Level 2 DFD (2nd Level)
+
+```
+    ┌──────────┐      Username/Password    ┌──────────────────────┐
+    │          │ ────────────────────────► │                      │
+    │          │                           │    2.0               │                  ┌─────────────┐
+    │   USER   │                           │    LOGIN             │ ───────────────► │   USERS     │
+    │          │ ◄──────────────────────── │                      │  Validate User   │    (D1)     │
+    │          │      Session Token        └──────────────────────┘                  └─────────────┘
+    └──────────┘
+```
+
+---
+
+### Level 3 DFD (3rd Level)
+
+```
+    ┌──────────┐      File Data            ┌──────────────────────┐
+    │          │ ────────────────────────► │                      │
+    │          │                           │    3.0               │                  ┌─────────────┐
+    │   USER   │                           │  FILE UPLOAD         │ ───────────────► │  SCAN_LOGS  │
+    │          │ ◄──────────────────────── │  & SCAN              │  Store Results   │    (D2)     │
+    │          │      Scan Results         └──────────────────────┘                  └─────────────┘
+    └──────────┘
+```
+
+---
+
+### Level 4 DFD (4th Level)
+
+```
+    ┌──────────┐      Payment Request      ┌──────────────────────┐
+    │          │ ────────────────────────► │                      │
+    │          │                           │    4.0               │                  ┌─────────────────┐
+    │   USER   │                           │  PAYMENT             │ ───────────────► │ PAYMENT_ORDERS  │
+    │          │ ◄──────────────────────── │  PROCESSING          │  Store Order     │      (D4)       │
+    │          │      Payment Status       └──────────────────────┘                  └─────────────────┘
+    └──────────┘                                    │
+                                                    │ Update Credits
+                                                    ▼
+                                           ┌─────────────────┐
+                                           │   USER_CREDITS  │
+                                           │      (D3)       │
+                                           └─────────────────┘
+```
+
+---
+
+### Level 5 DFD - Complete System Flow
+
+```
+                                    ┌───────────────────────────────────────────────────────────────┐
+                                    │                        HACKSHIELD SYSTEM                      │
+                                    │                                                               │
+    ┌──────────┐                    │   ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐   │
+    │          │   Registration     │   │   1.0   │    │   2.0   │    │   3.0   │    │   4.0   │   │
+    │          │ ─────────────────► │   │ REGISTER│───►│  LOGIN  │───►│  SCAN   │───►│ PAYMENT │   │
+    │          │                    │   └────┬────┘    └────┬────┘    └────┬────┘    └────┬────┘   │
+    │   USER   │                    │        │              │              │              │        │
+    │          │                    │        ▼              ▼              ▼              ▼        │
+    │          │ ◄───────────────── │   ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐   │
+    │          │   System Response  │   │  USERS  │    │ SESSION │    │  LOGS   │    │ ORDERS  │   │
+    │          │                    │   │   D1    │    │   D5    │    │   D2    │    │   D4    │   │
+    └──────────┘                    │   └─────────┘    └─────────┘    └─────────┘    └─────────┘   │
+                                    │                                                               │
+                                    └───────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 3.2 Entity Relationship Diagram (ERD)
+
+### Main ERD Structure
+
+```
+                                        ┌─────────────────────────────────────┐
+                                        │                                     │
+                                        │              auth.users             │
+                                        │                                     │
+                                        └──────────────────┬──────────────────┘
+                                                           │
+                           ┌───────────────────────────────┼───────────────────────────────┐
+                           │                               │                               │
+                           ▼                               ▼                               ▼
+              ┌────────────────────────┐      ┌────────────────────────┐      ┌────────────────────────┐
+              │                        │      │                        │      │                        │
+              │     user_credits       │      │   user_subscriptions   │      │     payment_orders     │
+              │                        │      │                        │      │                        │
+              └────────────────────────┘      └────────────────────────┘      └────────────────────────┘
+```
+
+---
+
+### Detailed ERD with Attributes (College Format)
+
+```
+                                    ┌─────────────────────────────────────────────┐
+                                    │                  auth.users                  │
+                                    ├─────────────────────────────────────────────┤
+                                    │                                             │
+            ┌───────────┐           │  ┌────────┐    ┌─────────┐    ┌──────────┐  │
+            │    id     │───────────┼──│   PK   │    │  email  │    │ password │  │
+            │   (PK)    │           │  └────────┘    └─────────┘    └──────────┘  │
+            └───────────┘           │                                             │
+                                    │  ┌────────────┐    ┌────────────────────┐   │
+                                    │  │ created_at │    │ email_confirmed_at │   │
+                                    │  └────────────┘    └────────────────────┘   │
+                                    │                                             │
+                                    └──────────────────────┬──────────────────────┘
+                                                           │
+                                                           │ 1
+                                                           │
+                           ┌───────────────────────────────┼───────────────────────────────┐
+                           │                               │                               │
+                           │ N                             │ 1                             │ N
+                           ▼                               ▼                               ▼
+        ┌──────────────────────────────────┐  ┌──────────────────────────────────┐  ┌──────────────────────────────────┐
+        │          user_credits            │  │       user_subscriptions         │  │         payment_orders           │
+        ├──────────────────────────────────┤  ├──────────────────────────────────┤  ├──────────────────────────────────┤
+        │                                  │  │                                  │  │                                  │
+        │  ┌────────┐      ┌───────────┐   │  │  ┌────────┐      ┌───────────┐   │  │  ┌────────┐      ┌───────────┐   │
+        │  │   id   │      │  user_id  │   │  │  │   id   │      │  user_id  │   │  │  │   id   │      │  user_id  │   │
+        │  │  (PK)  │      │   (FK)    │   │  │  │  (PK)  │      │   (FK)    │   │  │  │  (PK)  │      │   (FK)    │   │
+        │  └────────┘      └───────────┘   │  │  └────────┘      └───────────┘   │  │  └────────┘      └───────────┘   │
+        │                                  │  │                                  │  │                                  │
+        │  ┌──────────────┐                │  │  ┌───────────┐   ┌───────────┐   │  │  ┌─────────────────────┐         │
+        │  │ scan_credits │                │  │  │ plan_type │   │   status  │   │  │  │ razorpay_order_id   │         │
+        │  └──────────────┘                │  │  └───────────┘   └───────────┘   │  │  └─────────────────────┘         │
+        │                                  │  │                                  │  │                                  │
+        │  ┌────────────┐  ┌────────────┐  │  │  ┌─────────────────────────┐     │  │  ┌──────────┐     ┌──────────┐   │
+        │  │ created_at │  │ updated_at │  │  │  │   current_period_end   │     │  │  │  amount  │     │  status  │   │
+        │  └────────────┘  └────────────┘  │  │  └─────────────────────────┘     │  │  └──────────┘     └──────────┘   │
+        │                                  │  │                                  │  │                                  │
+        └──────────────────────────────────┘  │  ┌────────────┐  ┌────────────┐  │  │  ┌──────────────┐                │
+                                              │  │ created_at │  │ updated_at │  │  │  │ payment_type │                │
+                                              │  └────────────┘  └────────────┘  │  │  └──────────────┘                │
+                                              │                                  │  │                                  │
+                                              └──────────────────────────────────┘  │  ┌────────────┐  ┌────────────┐  │
+                                                                                    │  │ created_at │  │ updated_at │  │
+                                                                                    │  └────────────┘  └────────────┘  │
+                                                                                    │                                  │
+                                                                                    └──────────────────────────────────┘
+```
+
+---
+
+### ERD Notation Legend
+
+```
+    ┌─────────────────────────────────────────────────────────────────────┐
+    │                         NOTATION LEGEND                             │
+    ├─────────────────────────────────────────────────────────────────────┤
+    │                                                                     │
+    │   ┌──────────┐                                                      │
+    │   │  TABLE   │  = Entity (Database Table)                           │
+    │   └──────────┘                                                      │
+    │                                                                     │
+    │   ┌──────────┐                                                      │
+    │   │   (PK)   │  = Primary Key                                       │
+    │   └──────────┘                                                      │
+    │                                                                     │
+    │   ┌──────────┐                                                      │
+    │   │   (FK)   │  = Foreign Key                                       │
+    │   └──────────┘                                                      │
+    │                                                                     │
+    │   ────────────  = Relationship Line                                 │
+    │                                                                     │
+    │   1 ─────── N   = One-to-Many Relationship                          │
+    │                                                                     │
+    │   1 ─────── 1   = One-to-One Relationship                           │
+    │                                                                     │
+    └─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### Entity Description Table
+
+| Entity Name | Description | Primary Key | Foreign Key |
+|-------------|-------------|-------------|-------------|
+| auth.users | Stores user authentication details | id (UUID) | - |
+| user_credits | Tracks scan credits for users | id (UUID) | user_id → auth.users(id) |
+| user_subscriptions | Manages subscription plans | id (UUID) | user_id → auth.users(id) |
+| payment_orders | Records payment transactions | id (UUID) | user_id → auth.users(id) |
+
+---
+
+### Attribute Details
+
+#### auth.users Entity
+| Attribute | Data Type | Constraint | Description |
+|-----------|-----------|------------|-------------|
+| id | UUID | PRIMARY KEY | Unique user identifier |
+| email | VARCHAR(255) | NOT NULL, UNIQUE | User email address |
+| password | VARCHAR(255) | NOT NULL | Encrypted password |
+| created_at | TIMESTAMP | DEFAULT NOW() | Account creation time |
+| email_confirmed_at | TIMESTAMP | NULL | Email verification time |
+
+#### user_credits Entity
+| Attribute | Data Type | Constraint | Description |
+|-----------|-----------|------------|-------------|
+| id | UUID | PRIMARY KEY | Unique record identifier |
+| user_id | UUID | FOREIGN KEY | Reference to auth.users |
+| scan_credits | INTEGER | DEFAULT 0 | Available scan credits |
+| created_at | TIMESTAMP | DEFAULT NOW() | Record creation time |
+| updated_at | TIMESTAMP | DEFAULT NOW() | Last update time |
+
+#### user_subscriptions Entity
+| Attribute | Data Type | Constraint | Description |
+|-----------|-----------|------------|-------------|
+| id | UUID | PRIMARY KEY | Unique record identifier |
+| user_id | UUID | FOREIGN KEY | Reference to auth.users |
+| plan_type | VARCHAR(50) | DEFAULT 'free' | Subscription type |
+| status | VARCHAR(50) | DEFAULT 'active' | Subscription status |
+| current_period_end | TIMESTAMP | NULL | Subscription end date |
+| created_at | TIMESTAMP | DEFAULT NOW() | Record creation time |
+| updated_at | TIMESTAMP | DEFAULT NOW() | Last update time |
+
+#### payment_orders Entity
+| Attribute | Data Type | Constraint | Description |
+|-----------|-----------|------------|-------------|
+| id | UUID | PRIMARY KEY | Unique record identifier |
+| user_id | UUID | FOREIGN KEY | Reference to auth.users |
+| razorpay_order_id | VARCHAR(255) | NOT NULL | Razorpay order reference |
+| amount | DECIMAL(10,2) | NOT NULL | Payment amount in INR |
+| payment_type | VARCHAR(50) | NOT NULL | 'single_scan' or 'premium' |
+| status | VARCHAR(50) | DEFAULT 'created' | Payment status |
+| created_at | TIMESTAMP | DEFAULT NOW() | Order creation time |
+| updated_at | TIMESTAMP | DEFAULT NOW() | Last update time |
+
+---
+
+### Relationships Summary
+
+| Relationship | Type | Description |
+|--------------|------|-------------|
+| auth.users → user_credits | 1:1 | Each user has one credits record |
+| auth.users → user_subscriptions | 1:1 | Each user has one subscription record |
+| auth.users → payment_orders | 1:N | User can have multiple payment orders |
+
+---
+
+## 3.3 DFD Process Description
+
+| Process | Process Name | Input | Output | Description |
+|---------|--------------|-------|--------|-------------|
+| 1.0 | Registration | User Details | Auth Token | New user registration with email/password |
+| 2.0 | Login | Username/Password | Session Token | User authentication process |
+| 3.0 | File Upload & Scan | File Data | Scan Results | AI-powered malware detection |
+| 4.0 | Payment Processing | Payment Request | Payment Status | Razorpay payment integration |
+
+---
+
+## 3.4 Data Store Description
+
+| Data Store | Store Name | Description |
+|------------|------------|-------------|
+| D1 | USERS | Stores user authentication data |
+| D2 | SCAN_LOGS | Stores file scan history and results |
+| D3 | USER_CREDITS | Stores user scan credit balance |
+| D4 | PAYMENT_ORDERS | Stores Razorpay payment records |
+| D5 | SESSION | Stores active user sessions |
+
+---
+
+**Document Version:** 1.0  
+**Last Updated:** December 2024  
+**Project:** HackShield - AI Malware Scanner  
+**University:** Shivaji University, Kolhapur
+
+---
 │   │          │◄──────────────────────────────── │                   │   │
 │   └──────────┘         PDF Report              └───────────────────┘   │
 │                                                         │               │
