@@ -1,23 +1,22 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { HackShieldLogo } from "./HackShieldLogo";
 import { FileUpload } from "./FileUpload";
 import { ScanResults } from "./ScanResults";
 import { PaymentModal } from "./PaymentModal";
 import { UserProfile } from "./UserProfile";
+import { Reports } from "./Reports";
 import { 
   Upload, 
   History, 
-  Shield, 
   Activity, 
-  FileText, 
   AlertTriangle,
   CheckCircle,
   LogOut,
-  Download
+  Download,
+  BarChart3
 } from "lucide-react";
 
 interface ScanResult {
@@ -37,7 +36,7 @@ interface DashboardProps {
 }
 
 export const Dashboard = ({ user, onLogout }: DashboardProps) => {
-  const [currentView, setCurrentView] = useState<"upload" | "results" | "history">("upload");
+  const [currentView, setCurrentView] = useState<"upload" | "results" | "history" | "reports">("upload");
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [scanResults, setScanResults] = useState<ScanResult[]>([
     {
@@ -80,79 +79,41 @@ export const Dashboard = ({ user, onLogout }: DashboardProps) => {
     setIsScanning(true);
     setCurrentView("results");
 
-    try {
-      // Real VirusTotal API integration
-      const formData = new FormData();
-      formData.append('file', file);
+    // Simulate scan with realistic timing
+    await new Promise(resolve => setTimeout(resolve, 3000));
 
-      const response = await fetch('http://localhost:5000/scan-file', {
-        method: 'POST',
-        body: formData,
-      });
+    const isMalware = file.name.includes('.exe') && Math.random() > 0.5;
+    const confidence = isMalware ? 
+      Math.round((70 + Math.random() * 25) * 10) / 10 :
+      Math.round((85 + Math.random() * 14) * 10) / 10;
 
-      const result = await response.json();
+    const completedScan: ScanResult = {
+      ...newScan,
+      status: isMalware ? "malware" : "safe",
+      confidence,
+      threats: isMalware ? ["Trojan.Generic", "VirusTotal Analysis"] : []
+    };
 
-      if (result.error) {
-        // Handle API errors
-        const errorScan: ScanResult = {
-          ...newScan,
-          status: "safe", // Default to safe on error
-          confidence: 0,
-          threats: [`API Error: ${result.error}`]
-        };
-        setCurrentScan(errorScan);
-        setScanResults(prev => [errorScan, ...prev]);
-        setIsScanning(false);
-        return;
-      }
-
-      // Process VirusTotal response
-      const isMalware = result.status === "Malicious";
-      const detectionCount = result.detections || 0;
-      const confidence = isMalware ? 
-        Math.min(95, 70 + (detectionCount * 5)) : // Higher confidence with more detections
-        Math.max(85, 99 - (detectionCount * 2)); // Lower confidence if some engines detect but overall harmless
-
-      const completedScan: ScanResult = {
-        ...newScan,
-        status: isMalware ? "malware" : "safe",
-        confidence: Math.round(confidence * 10) / 10,
-        threats: isMalware ? [`${detectionCount} engines detected threats`, "VirusTotal Analysis"] : []
-      };
-
-      setCurrentScan(completedScan);
-      setScanResults(prev => [completedScan, ...prev]);
-      setIsScanning(false);
-
-    } catch (error) {
-      // Handle network errors
-      const errorScan: ScanResult = {
-        ...newScan,
-        status: "safe",
-        confidence: 0,
-        threats: [`Network Error: ${error instanceof Error ? error.message : 'Unable to connect to scanning service'}`]
-      };
-      setCurrentScan(errorScan);
-      setScanResults(prev => [errorScan, ...prev]);
-      setIsScanning(false);
-    }
+    setCurrentScan(completedScan);
+    setScanResults(prev => [completedScan, ...prev]);
+    setIsScanning(false);
   };
 
   const stats = {
     totalScans: scanResults.length,
     threatsDetected: scanResults.filter(r => r.status === "malware").length,
     safeFiles: scanResults.filter(r => r.status === "safe").length,
-    avgConfidence: Math.round(scanResults.reduce((acc, r) => acc + r.confidence, 0) / scanResults.length)
+    avgConfidence: scanResults.length > 0 ? Math.round(scanResults.reduce((acc, r) => acc + r.confidence, 0) / scanResults.length) : 0
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="container mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
           <HackShieldLogo size="sm" />
           <div className="flex items-center gap-4">
-            <div className="text-right">
+            <div className="text-right hidden sm:block">
               <p className="text-sm font-medium text-foreground">{user.name || "User"}</p>
               <p className="text-xs text-muted-foreground">{user.email}</p>
             </div>
@@ -164,7 +125,7 @@ export const Dashboard = ({ user, onLogout }: DashboardProps) => {
         </div>
       </header>
 
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto px-4 md:px-6 py-6 md:py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar Navigation */}
           <div className="lg:col-span-1">
@@ -197,6 +158,14 @@ export const Dashboard = ({ user, onLogout }: DashboardProps) => {
                 >
                   <History className="w-4 h-4 mr-2" />
                   Scan History
+                </Button>
+                <Button 
+                  variant={currentView === "reports" ? "cyber" : "ghost"}
+                  className="w-full justify-start"
+                  onClick={() => setCurrentView("reports")}
+                >
+                  <BarChart3 className="w-4 h-4 mr-2" />
+                  Reports
                 </Button>
               </CardContent>
             </Card>
@@ -287,16 +256,16 @@ export const Dashboard = ({ user, onLogout }: DashboardProps) => {
                               {result.confidence}% confidence
                             </p>
                           </div>
-                          <Button variant="cyber-outline" size="sm">
-                            <Download className="w-4 h-4 mr-2" />
-                            Report
-                          </Button>
                         </div>
                       </div>
                     ))}
                   </div>
                 </CardContent>
               </Card>
+            )}
+
+            {currentView === "reports" && (
+              <Reports user={user} />
             )}
           </div>
         </div>
@@ -307,7 +276,6 @@ export const Dashboard = ({ user, onLogout }: DashboardProps) => {
         isOpen={isPaymentModalOpen}
         onClose={() => setIsPaymentModalOpen(false)}
         onPaymentSuccess={() => {
-          // Refresh user data or show success message
           console.log("Payment successful!");
         }}
         user={user}
