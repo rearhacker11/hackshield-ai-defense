@@ -18,7 +18,8 @@ import {
   CheckCircle,
   LogOut,
   BarChart3,
-  Zap
+  Zap,
+  CreditCard
 } from "lucide-react";
 
 interface ScanResult {
