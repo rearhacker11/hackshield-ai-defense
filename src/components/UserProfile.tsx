@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,28 +6,18 @@ import {
   CreditCard, 
   Zap, 
   Star, 
-  RefreshCw,
-  Calendar,
-  Shield
+  Shield,
+  Crown
 } from "lucide-react";
 
 interface UserProfileProps {
   user: { email: string; name?: string };
+  credits: number;
+  isPremium: boolean;
   onOpenPayment: () => void;
 }
 
-export const UserProfile = ({ user, onOpenPayment }: UserProfileProps) => {
-  const [userData] = useState({
-    credits: 5,
-    subscription: {
-      plan: "free",
-      status: "active",
-      endDate: null as string | null
-    }
-  });
-
-  const isPremium = userData.subscription.plan === "premium";
-
+export const UserProfile = ({ user, credits, isPremium, onOpenPayment }: UserProfileProps) => {
   return (
     <Card className="bg-card/80 border-border mt-6">
       <CardHeader>
@@ -42,7 +31,7 @@ export const UserProfile = ({ user, onOpenPayment }: UserProfileProps) => {
         {/* Subscription Status */}
         <div className="flex items-center justify-between p-3 bg-background/50 rounded-lg border border-border">
           <div className="flex items-center gap-2">
-            <Star className={`w-4 h-4 ${isPremium ? 'text-cyber-green' : 'text-muted-foreground'}`} />
+            {isPremium ? <Crown className="w-4 h-4 text-cyber-green" /> : <Star className="w-4 h-4 text-muted-foreground" />}
             <span className="text-sm font-medium text-foreground">
               {isPremium ? "Premium Plan" : "Free Plan"}
             </span>
@@ -51,7 +40,7 @@ export const UserProfile = ({ user, onOpenPayment }: UserProfileProps) => {
             variant={isPremium ? "default" : "outline"}
             className={isPremium ? "bg-cyber-green text-background" : ""}
           >
-            {userData.subscription.status}
+            active
           </Badge>
         </div>
 
@@ -62,7 +51,7 @@ export const UserProfile = ({ user, onOpenPayment }: UserProfileProps) => {
             <span className="text-sm font-medium text-foreground">Scan Credits</span>
           </div>
           <Badge variant="outline" className="font-mono">
-            {isPremium ? "∞" : userData.credits}
+            {isPremium ? "∞" : credits}
           </Badge>
         </div>
 

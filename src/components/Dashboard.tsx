@@ -7,6 +7,7 @@ import { FileUpload } from "./FileUpload";
 import { ScanResults } from "./ScanResults";
 import { PaymentModal } from "./PaymentModal";
 import { UserProfile } from "./UserProfile";
+import { UserCredits } from "./UserCredits";
 import { Reports } from "./Reports";
 import { 
   Upload, 
@@ -15,8 +16,8 @@ import {
   AlertTriangle,
   CheckCircle,
   LogOut,
-  Download,
-  BarChart3
+  BarChart3,
+  Zap
 } from "lucide-react";
 
 interface ScanResult {
@@ -36,8 +37,10 @@ interface DashboardProps {
 }
 
 export const Dashboard = ({ user, onLogout }: DashboardProps) => {
-  const [currentView, setCurrentView] = useState<"upload" | "results" | "history" | "reports">("upload");
+  const [currentView, setCurrentView] = useState<"upload" | "results" | "history" | "reports" | "credits">("upload");
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [credits, setCredits] = useState(5);
+  const [isPremium, setIsPremium] = useState(false);
   const [scanResults, setScanResults] = useState<ScanResult[]>([
     {
       id: "1",
@@ -79,7 +82,6 @@ export const Dashboard = ({ user, onLogout }: DashboardProps) => {
     setIsScanning(true);
     setCurrentView("results");
 
-    // Simulate scan with realistic timing
     await new Promise(resolve => setTimeout(resolve, 3000));
 
     const isMalware = file.name.includes('.exe') && Math.random() > 0.5;
@@ -97,6 +99,15 @@ export const Dashboard = ({ user, onLogout }: DashboardProps) => {
     setCurrentScan(completedScan);
     setScanResults(prev => [completedScan, ...prev]);
     setIsScanning(false);
+    if (!isPremium) setCredits(prev => Math.max(0, prev - 1));
+  };
+
+  const handlePaymentSuccess = (planType: "scan" | "subscription") => {
+    if (planType === "subscription") {
+      setIsPremium(true);
+    } else {
+      setCredits(prev => prev + 1);
+    }
   };
 
   const stats = {
@@ -160,6 +171,14 @@ export const Dashboard = ({ user, onLogout }: DashboardProps) => {
                   Scan History
                 </Button>
                 <Button 
+                  variant={currentView === "credits" ? "cyber" : "ghost"}
+                  className="w-full justify-start"
+                  onClick={() => setCurrentView("credits")}
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  Credits & Plan
+                </Button>
+                <Button 
                   variant={currentView === "reports" ? "cyber" : "ghost"}
                   className="w-full justify-start"
                   onClick={() => setCurrentView("reports")}
@@ -173,6 +192,8 @@ export const Dashboard = ({ user, onLogout }: DashboardProps) => {
             {/* User Profile & Payment */}
             <UserProfile 
               user={user}
+              credits={credits}
+              isPremium={isPremium}
               onOpenPayment={() => setIsPaymentModalOpen(true)}
             />
 
@@ -264,6 +285,16 @@ export const Dashboard = ({ user, onLogout }: DashboardProps) => {
               </Card>
             )}
 
+            {currentView === "credits" && (
+              <UserCredits 
+                user={user}
+                credits={credits}
+                isPremium={isPremium}
+                totalScans={stats.totalScans}
+                onOpenPayment={() => setIsPaymentModalOpen(true)}
+              />
+            )}
+
             {currentView === "reports" && (
               <Reports user={user} />
             )}
@@ -275,9 +306,7 @@ export const Dashboard = ({ user, onLogout }: DashboardProps) => {
       <PaymentModal 
         isOpen={isPaymentModalOpen}
         onClose={() => setIsPaymentModalOpen(false)}
-        onPaymentSuccess={() => {
-          console.log("Payment successful!");
-        }}
+        onPaymentSuccess={handlePaymentSuccess}
         user={user}
       />
     </div>
