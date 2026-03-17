@@ -9,6 +9,7 @@ import { PaymentModal } from "./PaymentModal";
 import { UserProfile } from "./UserProfile";
 import { UserCredits } from "./UserCredits";
 import { Reports } from "./Reports";
+import { PaymentUsers } from "./PaymentUsers";
 import { 
   Upload, 
   History, 
