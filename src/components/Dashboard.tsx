@@ -308,6 +308,10 @@ export const Dashboard = ({ user, onLogout }: DashboardProps) => {
             {currentView === "reports" && (
               <Reports user={user} />
             )}
+
+            {currentView === "payments" && (
+              <PaymentUsers />
+            )}
           </div>
         </div>
       </div>
