@@ -38,7 +38,7 @@ interface DashboardProps {
 }
 
 export const Dashboard = ({ user, onLogout }: DashboardProps) => {
-  const [currentView, setCurrentView] = useState<"upload" | "results" | "history" | "reports" | "credits">("upload");
+  const [currentView, setCurrentView] = useState<"upload" | "results" | "history" | "reports" | "credits" | "payments">("upload");
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [credits, setCredits] = useState(5);
   const [isPremium, setIsPremium] = useState(false);
