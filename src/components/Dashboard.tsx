@@ -9,6 +9,7 @@ import { PaymentModal } from "./PaymentModal";
 import { UserProfile } from "./UserProfile";
 import { UserCredits } from "./UserCredits";
 import { Reports } from "./Reports";
+import { PaymentUsers } from "./PaymentUsers";
 import { 
   Upload, 
   History, 
@@ -17,7 +18,8 @@ import {
   CheckCircle,
   LogOut,
   BarChart3,
-  Zap
+  Zap,
+  CreditCard
 } from "lucide-react";
 
 interface ScanResult {
@@ -37,7 +39,7 @@ interface DashboardProps {
 }
 
 export const Dashboard = ({ user, onLogout }: DashboardProps) => {
-  const [currentView, setCurrentView] = useState<"upload" | "results" | "history" | "reports" | "credits">("upload");
+  const [currentView, setCurrentView] = useState<"upload" | "results" | "history" | "reports" | "credits" | "payments">("upload");
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [credits, setCredits] = useState(5);
   const [isPremium, setIsPremium] = useState(false);
@@ -186,6 +188,14 @@ export const Dashboard = ({ user, onLogout }: DashboardProps) => {
                   <BarChart3 className="w-4 h-4 mr-2" />
                   Reports
                 </Button>
+                <Button 
+                  variant={currentView === "payments" ? "cyber" : "ghost"}
+                  className="w-full justify-start"
+                  onClick={() => setCurrentView("payments")}
+                >
+                  <CreditCard className="w-4 h-4 mr-2" />
+                  Paid Users
+                </Button>
               </CardContent>
             </Card>
 
@@ -297,6 +307,10 @@ export const Dashboard = ({ user, onLogout }: DashboardProps) => {
 
             {currentView === "reports" && (
               <Reports user={user} />
+            )}
+
+            {currentView === "payments" && (
+              <PaymentUsers />
             )}
           </div>
         </div>
