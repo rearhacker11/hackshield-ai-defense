@@ -187,6 +187,14 @@ export const Dashboard = ({ user, onLogout }: DashboardProps) => {
                   <BarChart3 className="w-4 h-4 mr-2" />
                   Reports
                 </Button>
+                <Button 
+                  variant={currentView === "payments" ? "cyber" : "ghost"}
+                  className="w-full justify-start"
+                  onClick={() => setCurrentView("payments")}
+                >
+                  <CreditCard className="w-4 h-4 mr-2" />
+                  Paid Users
+                </Button>
               </CardContent>
             </Card>
 
